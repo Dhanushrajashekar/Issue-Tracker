@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project — Issue Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app-layout">
+    <aside class="sidebar">
+        <a href="dashboard.html" class="sidebar-brand"><i class="bi bi-bug"></i> Issue Tracker</a>
+        <ul class="sidebar-nav">
+            <li><a href="dashboard.html"><i class="bi bi-grid-1x2"></i> Dashboard</a></li>
+            <li><a href="projects.html" class="active"><i class="bi bi-folder"></i> Projects</a></li>
+            <li><a href="my-issues.html"><i class="bi bi-list-check"></i> My Issues</a></li>
+            <li><a href="admin.html" id="adminLink" style="display:none;"><i class="bi bi-shield-check"></i> Admin</a></li>
+        </ul>
+        <div class="sidebar-user">
+            <div class="user-avatar" id="sidebarAvatar">?</div>
+            <div class="user-info">
+                <div class="user-name" id="sidebarName">Loading…</div>
+                <div class="user-role" id="sidebarRole"></div>
+            </div>
+            <button class="btn-icon" onclick="logout()" title="Sign out"><i class="bi bi-box-arrow-right" style="color:#475569;"></i></button>
+        </div>
+    </aside>
+
+    <div class="main-content">
+        <div class="topbar">
+            <div>
+                <span style="font-size:.8rem; color:var(--text-muted);"><a href="projects.html" style="color:var(--text-muted); text-decoration:none;">Projects</a> /</span>
+                <span id="topbarProjectName" style="font-weight:600; font-size:.95rem;"> Loading…</span>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addMemberModal">
+                    <i class="bi bi-person-plus me-1"></i>Add Member
+                </button>
+                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#newIssueModal">
+                    <i class="bi bi-plus me-1"></i>New Issue
+                </button>
+            </div>
+        </div>
+
+        <div class="page-body">
+            <div id="alert-area"></div>
+
+            <!-- Project header -->
+            <div class="mb-3 d-flex align-items-center gap-2 flex-wrap">
+                <span class="project-key" id="projectKeyBadge">—</span>
+                <span id="projectDesc" class="text-muted" style="font-size:.85rem;"></span>
+            </div>
+
+            <!-- Members -->
+            <div class="mb-3" id="membersRow" style="font-size:.8rem; color:var(--text-muted);"></div>
+
+            <!-- Filters -->
+            <div class="filter-bar">
+                <select class="form-select" id="filterStatus" style="width:auto;">
+                    <option value="">All Statuses</option>
+                    <option value="OPEN">Open</option>
+                    <option value="IN_PROGRESS">In Progress</option>
+                    <option value="IN_REVIEW">In Review</option>
+                    <option value="RESOLVED">Resolved</option>
+                    <option value="CLOSED">Closed</option>
+                </select>
+                <select class="form-select" id="filterPriority" style="width:auto;">
+                    <option value="">All Priorities</option>
+                    <option value="CRITICAL">Critical</option>
+                    <option value="HIGH">High</option>
+                    <option value="MEDIUM">Medium</option>
+                    <option value="LOW">Low</option>
+                </select>
+                <select class="form-select" id="filterType" style="width:auto;">
+                    <option value="">All Types</option>
+                    <option value="BUG">Bug</option>
+                    <option value="FEATURE">Feature</option>
+                    <option value="TASK">Task</option>
+                    <option value="IMPROVEMENT">Improvement</option>
+                </select>
+                <input type="text" class="form-control" id="filterSearch" placeholder="Search issues…" style="width:200px;">
+            </div>
+
+            <!-- Issues table -->
+            <div class="card">
+                <div class="card-body p-0">
+                    <table class="issue-table w-100">
+                        <thead>
+                            <tr>
+                                <th style="width:80px;">Type</th>
+                                <th>Title</th>
+                                <th style="width:110px;">Status</th>
+                                <th style="width:90px;">Priority</th>
+                                <th style="width:120px;">Assignee</th>
+                                <th style="width:90px;">Created</th>
+                                <th style="width:60px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="issuesTableBody">
+                            <tr><td colspan="7" class="text-center py-4 text-muted"><div class="spinner-border spinner-border-sm"></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- New Issue Modal -->
+<div class="modal fade" id="newIssueModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create Issue</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="issue-modal-alert"></div>
+                <div class="mb-3">
+                    <label class="form-label">Title <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="issueTitle" placeholder="Short description of the issue">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control" id="issueDescription" rows="4" placeholder="Steps to reproduce, expected vs actual behavior…"></textarea>
+                </div>
+                <div class="row g-3">
+                    <div class="col-sm-4">
+                        <label class="form-label">Type</label>
+                        <select class="form-select" id="issueType">
+                            <option value="BUG">🐛 Bug</option>
+                            <option value="FEATURE">✨ Feature</option>
+                            <option value="TASK">✓ Task</option>
+                            <option value="IMPROVEMENT">⬆ Improvement</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="form-label">Priority</label>
+                        <select class="form-select" id="issuePriority">
+                            <option value="LOW">↓ Low</option>
+                            <option value="MEDIUM" selected>→ Medium</option>
+                            <option value="HIGH">↑ High</option>
+                            <option value="CRITICAL">⚡ Critical</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="form-label">Assignee</label>
+                        <select class="form-select" id="issueAssignee">
+                            <option value="">Unassigned</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-sm btn-primary" id="createIssueBtn">Create Issue</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Member Modal -->
+<div class="modal fade" id="addMemberModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Member</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="member-modal-alert"></div>
+                <label class="form-label">Email address</label>
+                <input type="email" class="form-control" id="memberEmail" placeholder="colleague@company.com">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-sm btn-primary" id="addMemberBtn">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/project-detail.js"></script>
+</body>
+</html>

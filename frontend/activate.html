@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activate Account — Issue Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="auth-right" style="min-height:100vh; width:100%;">
+    <div class="auth-form-wrap text-center">
+        <a href="index.html" class="auth-logo" style="justify-content:center;"><i class="bi bi-bug"></i> Issue Tracker</a>
+        <div id="result" class="mt-4">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-3 text-muted">Activating your account…</p>
+        </div>
+    </div>
+</div>
+<script src="js/config.js"></script>
+<script>
+    const token = new URLSearchParams(window.location.search).get('token');
+    const resultEl = document.getElementById('result');
+
+    if (!token) {
+        resultEl.innerHTML = '<i class="bi bi-x-circle text-danger" style="font-size:3rem;"></i><h4 class="mt-3">Invalid Link</h4><p class="text-muted">No activation token found.</p>';
+    } else {
+        apiFetch('/api/auth/activate?token=' + encodeURIComponent(token))
+            .then(() => {
+                resultEl.innerHTML = '<i class="bi bi-check-circle text-success" style="font-size:3rem;"></i><h4 class="mt-3">Account Activated!</h4><p class="text-muted">Your account is ready. Redirecting to login…</p>';
+                setTimeout(() => window.location.href = 'index.html', 2000);
+            })
+            .catch(err => {
+                resultEl.innerHTML = `<i class="bi bi-x-circle text-danger" style="font-size:3rem;"></i><h4 class="mt-3">Activation Failed</h4><p class="text-muted">${err.message}</p><a href="index.html" class="btn btn-primary mt-2">Go to Login</a>`;
+            });
+    }
+</script>
+</body>
+</html>

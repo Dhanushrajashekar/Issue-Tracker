@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — Issue Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="auth-page">
+    <div class="auth-left">
+        <span class="brand-icon"><i class="bi bi-bug"></i></span>
+        <h1>Track bugs.<br>Ship faster.</h1>
+        <p>A simple, focused issue tracker built for developer teams. Create projects, file issues, assign work, and stay in sync.</p>
+        <ul class="auth-features">
+            <li><span class="feat-icon"><i class="bi bi-kanban"></i></span> Issues with status, priority, and type</li>
+            <li><span class="feat-icon"><i class="bi bi-people"></i></span> Role-based access — Admin, Developer, Reporter</li>
+            <li><span class="feat-icon"><i class="bi bi-bell"></i></span> Real-time notifications via WebSocket</li>
+            <li><span class="feat-icon"><i class="bi bi-paperclip"></i></span> File attachments for screenshots and logs</li>
+        </ul>
+    </div>
+    <div class="auth-right">
+        <div class="auth-form-wrap">
+            <a href="index.html" class="auth-logo"><i class="bi bi-bug"></i> Issue Tracker</a>
+            <h2>Welcome back</h2>
+            <p class="subtitle">Sign in to your workspace.</p>
+            <div id="alert-area"></div>
+            <form id="loginForm" novalidate>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" placeholder="you@company.com" required autocomplete="email">
+                </div>
+                <div class="mb-1">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" placeholder="Your password" required autocomplete="current-password">
+                </div>
+                <div class="text-end mb-4">
+                    <a href="forgot-password.html" class="text-muted small" style="text-decoration:none;">Forgot password?</a>
+                </div>
+                <button type="submit" class="btn btn-primary w-100" id="loginBtn">
+                    Sign in <span id="spinner" class="spinner-border spinner-border-sm ms-2 d-none"></span>
+                </button>
+            </form>
+            <div class="divider-text">or</div>
+            <p class="text-center mb-0" style="font-size:.875rem; color:var(--text-muted);">
+                No account? <a href="register.html" style="color:var(--primary); font-weight:600; text-decoration:none;">Create one free</a>
+            </p>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/config.js"></script>
+<script>
+    if (localStorage.getItem('token')) window.location.href = 'dashboard.html';
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('loginBtn');
+        const spinner = document.getElementById('spinner');
+        btn.disabled = true;
+        spinner.classList.remove('d-none');
+        try {
+            const data = await apiFetch('/api/auth/login', {
+                method: 'POST',
+                body: JSON.stringify({
+                    email: document.getElementById('email').value.trim(),
+                    password: document.getElementById('password').value
+                })
+            });
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify(data.user));
+            window.location.href = 'dashboard.html';
+        } catch (err) {
+            showAlert('alert-area', err.message, 'danger');
+            btn.disabled = false;
+            spinner.classList.add('d-none');
+        }
+    });
+</script>
+</body>
+</html>

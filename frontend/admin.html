@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Issue Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app-layout">
+    <aside class="sidebar">
+        <a href="dashboard.html" class="sidebar-brand"><i class="bi bi-bug"></i> Issue Tracker</a>
+        <ul class="sidebar-nav">
+            <li><a href="dashboard.html"><i class="bi bi-grid-1x2"></i> Dashboard</a></li>
+            <li><a href="projects.html"><i class="bi bi-folder"></i> Projects</a></li>
+            <li><a href="my-issues.html"><i class="bi bi-list-check"></i> My Issues</a></li>
+            <li><a href="admin.html" class="active"><i class="bi bi-shield-check"></i> Admin</a></li>
+        </ul>
+        <div class="sidebar-user">
+            <div class="user-avatar" id="sidebarAvatar">?</div>
+            <div class="user-info">
+                <div class="user-name" id="sidebarName">Loading…</div>
+                <div class="user-role" id="sidebarRole"></div>
+            </div>
+            <button class="btn-icon" onclick="logout()" title="Sign out"><i class="bi bi-box-arrow-right" style="color:#475569;"></i></button>
+        </div>
+    </aside>
+
+    <div class="main-content">
+        <div class="topbar"><h1>User Management</h1></div>
+        <div class="page-body">
+            <div id="alert-area"></div>
+            <div class="card">
+                <div class="card-header"><h5>All Users</h5></div>
+                <div class="card-body p-0">
+                    <table class="issue-table w-100">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th style="width:90px;">Role</th>
+                                <th style="width:80px;">Status</th>
+                                <th style="width:100px;">Joined</th>
+                                <th style="width:140px;">Change Role</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersBody">
+                            <tr><td colspan="6" class="text-center py-4"><div class="spinner-border spinner-border-sm"></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

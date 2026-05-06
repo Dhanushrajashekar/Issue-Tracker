@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register — Issue Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="auth-page">
+    <div class="auth-left">
+        <span class="brand-icon"><i class="bi bi-bug"></i></span>
+        <h1>Join your team's workspace.</h1>
+        <p>Create an account and start tracking issues with your team today. New accounts default to Developer role.</p>
+        <ul class="auth-features">
+            <li><span class="feat-icon"><i class="bi bi-shield-check"></i></span> JWT authentication with BCrypt password hashing</li>
+            <li><span class="feat-icon"><i class="bi bi-eye"></i></span> Watch issues to get notified of updates</li>
+            <li><span class="feat-icon"><i class="bi bi-person-badge"></i></span> Admins can promote roles and manage users</li>
+            <li><span class="feat-icon"><i class="bi bi-lightning"></i></span> Real-time updates via WebSocket</li>
+        </ul>
+    </div>
+    <div class="auth-right">
+        <div class="auth-form-wrap">
+            <a href="index.html" class="auth-logo"><i class="bi bi-bug"></i> Issue Tracker</a>
+            <h2>Create your account</h2>
+            <p class="subtitle">Free to use. No credit card needed.</p>
+            <div id="alert-area"></div>
+            <form id="registerForm" novalidate>
+                <div class="mb-3">
+                    <label class="form-label">Full name</label>
+                    <input type="text" class="form-control" id="name" placeholder="Alice Smith" required minlength="2" autocomplete="name">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" placeholder="alice@company.com" required autocomplete="email">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" placeholder="At least 6 characters" required minlength="6" autocomplete="new-password">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">Confirm password</label>
+                    <input type="password" class="form-control" id="confirmPassword" placeholder="Same password again" required autocomplete="new-password">
+                </div>
+                <button type="submit" class="btn btn-primary w-100" id="registerBtn">
+                    Create account <span id="spinner" class="spinner-border spinner-border-sm ms-2 d-none"></span>
+                </button>
+            </form>
+            <div class="divider-text">or</div>
+            <p class="text-center mb-0" style="font-size:.875rem; color:var(--text-muted);">
+                Already have an account? <a href="index.html" style="color:var(--primary); font-weight:600; text-decoration:none;">Sign in</a>
+            </p>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/config.js"></script>
+<script>
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const password = document.getElementById('password').value;
+        const confirm  = document.getElementById('confirmPassword').value;
+        if (password !== confirm) { showAlert('alert-area', 'Passwords do not match.', 'danger'); return; }
+
+        const btn = document.getElementById('registerBtn');
+        const spinner = document.getElementById('spinner');
+        btn.disabled = true; spinner.classList.remove('d-none');
+
+        try {
+            await apiFetch('/api/auth/register', {
+                method: 'POST',
+                body: JSON.stringify({
+                    name: document.getElementById('name').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    password
+                })
+            });
+            showAlert('alert-area', '<strong>Account created!</strong> Redirecting to login…', 'success');
+            document.getElementById('registerForm').reset();
+            setTimeout(() => window.location.href = 'index.html', 1200);
+        } catch (err) {
+            showAlert('alert-area', err.message, 'danger');
+            btn.disabled = false; spinner.classList.add('d-none');
+        }
+    });
+</script>
+</body>
+</html>

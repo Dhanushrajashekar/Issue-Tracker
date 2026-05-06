@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects — Issue Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app-layout">
+    <aside class="sidebar">
+        <a href="dashboard.html" class="sidebar-brand"><i class="bi bi-bug"></i> Issue Tracker</a>
+        <ul class="sidebar-nav">
+            <li><a href="dashboard.html"><i class="bi bi-grid-1x2"></i> Dashboard</a></li>
+            <li><a href="projects.html" class="active"><i class="bi bi-folder"></i> Projects</a></li>
+            <li><a href="my-issues.html"><i class="bi bi-list-check"></i> My Issues</a></li>
+            <li><a href="admin.html" id="adminLink" style="display:none;"><i class="bi bi-shield-check"></i> Admin</a></li>
+        </ul>
+        <div class="sidebar-user">
+            <div class="user-avatar" id="sidebarAvatar">?</div>
+            <div class="user-info">
+                <div class="user-name" id="sidebarName">Loading…</div>
+                <div class="user-role" id="sidebarRole"></div>
+            </div>
+            <button class="btn-icon" onclick="logout()" title="Sign out"><i class="bi bi-box-arrow-right" style="color:#475569;"></i></button>
+        </div>
+    </aside>
+
+    <div class="main-content">
+        <div class="topbar">
+            <h1>Projects</h1>
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#newProjectModal">
+                <i class="bi bi-plus me-1"></i>New Project
+            </button>
+        </div>
+        <div class="page-body">
+            <div id="alert-area"></div>
+            <div class="row g-3" id="projectsGrid">
+                <div class="col-12 text-center text-muted py-4"><div class="spinner-border spinner-border-sm"></div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- New Project Modal -->
+<div class="modal fade" id="newProjectModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create New Project</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modal-alert"></div>
+                <div class="mb-3">
+                    <label class="form-label">Project Name</label>
+                    <input type="text" class="form-control" id="projectName" placeholder="e.g. Mobile App">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Project Key <span class="text-muted" style="font-size:.75rem;">(2–10 uppercase letters, e.g. MOBILE)</span></label>
+                    <input type="text" class="form-control" id="projectKey" placeholder="MOBILE" style="font-family:monospace; text-transform:uppercase;">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Description <span class="text-muted" style="font-size:.75rem;">(optional)</span></label>
+                    <textarea class="form-control" id="projectDesc" rows="2" placeholder="What is this project about?"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-sm btn-primary" id="createProjectBtn">Create Project</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/projects.js"></script>
+</body>
+</html>
